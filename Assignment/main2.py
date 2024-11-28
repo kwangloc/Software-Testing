@@ -66,19 +66,23 @@ class TestingPHPTravels(unittest.TestCase):
             try:
                 self.driver.get(self.homepage_url)
                 mainPage = page.MainPage(self.driver)
-                assert mainPage.does_title_match()
+                self.assertTrue(mainPage.does_title_match(), "Main page title does not match.")
                 mainPage.go_login_page()
                 login_page = page.LoginPage(self.driver)
-                assert login_page.does_title_match()
+                self.assertTrue(login_page.does_title_match(), "Login page title does not match.")
                 login_page.fill_n_submit(user)
                 time.sleep(1)
+                self.assertTrue(login_page.is_logged_in(), "Login failed for user.")
+
                 login_page.log_out()
                 test_login_results.append('passed')
-                assert True
-            except Exception as err:
-                print("Loi roi:", row)
+            except AssertionError as ae:
+                print(f"Assertion failed for row {index}: {ae}")
                 test_login_results.append('failed')
-                pass
+            except Exception as err:
+                print(f"Error encountered for row {index}: {err}")
+                test_login_results.append('failed')
+                # pass
                 # assert False
                 
         print(test_login_results)
